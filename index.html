@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Exam - Komputasi Pervasif</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --background: #f3f4f6;
+            --surface: #ffffff;
+            --text: #1f2937;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 600px;
+            transition: all 0.3s ease;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .header-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--danger);
+        }
+
+        .question-box {
+            margin-bottom: 20px;
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: #f9fafb;
+        }
+
+        .option-label input {
+            margin-right: 10px;
+        }
+
+        /* Overlay untuk status Idle/AFK */
+        #idle-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            text-align: center;
+        }
+
+        #idle-overlay h1 {
+            color: var(--warning);
+            margin-bottom: 10px;
+        }
+
+        .log-box {
+            background: #f9fafb;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            text-align: left;
+        }
+
+        .log-item {
+            font-family: monospace;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #4b5563;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="start-page" class="container">
+        <h2>Simulasi E-Ujian Cerdas</h2>
+        <p style="margin-bottom: 20px; text-align: center; color: #6b7280;">
+            Sistem dilengkapi dengan sensor kehadiran & perhatian real-time.
+        </p>
+        <div class="form-group">
+            <label for="username">Nama Lengkap</label>
+            <input type="text" id="username" placeholder="Masukkan nama Anda..." required>
+        </div>
+        <div class="form-group">
+            <label for="nim">NIM</label>
+            <input type="text" id="nim" placeholder="Masukkan NIM Anda..." required>
+        </div>
+        <button id="btn-start">Mulai Ujian</button>
+    </div>
+
+    <div id="exam-page" class="container hidden">
+        <div class="header-status">
+            <div>Peserta: <strong id="display-name"></strong></div>
+            <div class="timer">Sisa Waktu: <span id="time-left">60</span>s</div>
+        </div>
+
+        <div id="quiz-container">
+            </div>
+
+        <button id="btn-next">Pertanyaan Selanjutnya</button>
+    </div>
+
+    <div id="result-page" class="container hidden">
+        <h2>Hasil Ujian & Analisis Perilaku</h2>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <p style="font-size: 18px;">Terima kasih, <span id="result-name"></span> (<span id="result-nim"></span>)</p>
+            <h1 style="font-size: 48px; color: var(--primary); margin: 15px 0;" id="display-score">0</h1>
+            <p>Skor Anda</p>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+
+        <h3>Log Aktivitas (Pervasive Analytics)</h3>
+        <div class="log-box">
+            <div class="log-item">🚫 Keluar Tab Browser: <strong id="log-tab-cheat">0</strong> kali</div>
+            <div class="log-item">💤 Status Terdeteksi AFK: <strong id="log-afk-count">0</strong> kali</div>
+            <div class="log-item" style="color: var(--danger);">⚠️ Total Pelanggaran/Kelalaian: <span id="log-total-penalty">0</span></div>
+        </div>
+        <button onclick="window.location.reload()">Uji Coba Lagi</button>
+    </div>
+
+    <div id="idle-overlay" class="hidden">
+        <h1>Ujian Dijeda!</h1>
+        <p>Anda terdeteksi meninggalkan laptop (Away From Keyboard / Idle).</p>
+        <p style="margin-top: 10px; font-size: 14px; color: #aaa;">Gerakkan mouse atau tekan keyboard untuk kembali</p>
+    </div>
+
+    <script>
+        // DATA SOAL (5 Soal Pilihan Ganda Umum)
+        const quizData = [
+            { question: "Apa ibu kota negara Indonesia?", options: ["Surabaya", "Jakarta", "Nusantara", "Bandung"], correct: 2 },
+            { question: "Planet terdekat dari Matahari dalam tata surya adalah...", options: ["Mars", "Venus", "Merkurius", "Jupiter"], correct: 2 },
+            { question: "Lagu kebangsaan Republik Indonesia adalah...", options: ["Hari Merdeka", "Indonesia Raya", "Bagimu Negeri", "Satu Nusa Satu Bangsa"], correct: 1 },
+            { question: "Benua terbesar di dunia adalah...", options: ["Afrika", "Amerika", "Eropa", "Asia"], correct: 3 },
+            { question: "Burung Garuda mencengkeram pita yang bertuliskan...", options: ["Bhinneka Tunggal Ika", "Tut Wuri Handayani", "Ing Ngarso Sung Tulodo", "Pancasila Jaya"], correct: 0 }
+        ];
+
+        // STATE APLIKASI
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timeLeft = 60; 
+        let timerInterval;
+        let answers = [];
+
+        // METRIK KOMPUTASI PERVASIF (LOGGING)
+        let tabCheatCount = 0;
+        let afkCount = 0;
+        let isIdle = false;
+        let idleTimeout;
+        const IDLE_TIME_LIMIT = 15000; // 15 Detik ketetapan simulasi idle
+
+        // DOM ELEMENTS
+        const startPage = document.getElementById('start-page');
+        const examPage = document.getElementById('exam-page');
+        const resultPage = document.getElementById('result-page');
+        const idleOverlay = document.getElementById('idle-overlay');
+
+        // 1. ALUR MULAI UJIAN
+        document.getElementById('btn-start').addEventListener('click', () => {
+            const name = document.getElementById('username').value.trim();
+            const nim = document.getElementById('nim').value.trim();
+
+            if (!name || !nim) {
+                alert("Harap isi Nama dan NIM terlebih dahulu!");
+                return;
+            }
+
+            document.getElementById('display-name').textContent = name;
+            startPage.classList.add('hidden');
+            examPage.classList.remove('hidden');
+
+            startTimer();
+            loadQuestion();
+            startIdleTimer(); // Mulai tracking aktivitas
+        });
+
+        // 2. LOGIKA RENDER SOAL
+        function loadQuestion() {
+            const quizContainer = document.getElementById('quiz-container');
+            const currentQuestion = quizData[currentQuestionIndex];
+            
+            quizContainer.innerHTML = `
+                <div class="question-box">
+                    <h3>Soal ${currentQuestionIndex + 1} dari ${quizData.length}</h3>
+                    <p style="margin-top: 10px; font-size: 18px;">${currentQuestion.question}</p>
+                    <div class="options-group">
+                        ${currentQuestion.options.map((option, index) => `
+                            <label class="option-label">
+                                <input type="radio" name="answer" value="${index}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            if (currentQuestionIndex === quizData.length - 1) {
+                document.getElementById('btn-next').textContent = "Selesai & Kirim";
+            }
+        }
+
+        // 3. TOMBOL NEXT / SELESAI
+        document.getElementById('btn-next').addEventListener('click', () => {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            
+            if (!selectedOption) {
+                alert("Pilih salah satu jawaban terlebih dahulu!");
+                return;
+            }
+
+            // Simpan jawaban
+            answers.push(parseInt(selectedOption.value));
+
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                finishExam();
+            }
+        });
+
+        // 4. LOGIKA TIMER UTAMA
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (!isIdle) { // Timer hanya berjalan jika user TIDAK sedang AFK
+                    timeLeft--;
+                    document.getElementById('time-left').textContent = timeLeft;
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        alert("Waktu habis!");
+                        finishExam();
+                    }
+                }
+            }, 1000);
+        }
+
+        // 5. SELESAI UJIAN & HITUNG SKOR
+        function finishExam() {
+            clearInterval(timerInterval);
+            clearTimeout(idleTimeout);
+
+            // Hitung Skor
+            score = 0;
+            answers.forEach((ans, index) => {
+                if (ans === quizData[index].correct) {
+                    score += 20; // 5 soal x 20 = 100
+                }
+            });
+
+            // Tampilkan Halaman Hasil
+            examPage.classList.add('hidden');
+            resultPage.classList.remove('hidden');
+
+            document.getElementById('result-name').textContent = document.getElementById('username').value;
+            document.getElementById('result-nim').textContent = document.getElementById('nim').value;
+            document.getElementById('display-score').textContent = score;
+            
+            // Masukkan Log Pervasif ke UI
+            document.getElementById('log-tab-cheat').textContent = tabCheatCount;
+            document.getElementById('log-afk-count').textContent = afkCount;
+            document.getElementById('log-total-penalty').textContent = tabCheatCount + afkCount;
+        }
+
+
+        // ==========================================
+        // FEATURE PERVASIVE 1: TAB VISIBILITY MONITOR
+        // ==========================================
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                tabCheatCount++;
+                console.warn(`User berpindah tab! Total: ${tabCheatCount}`);
+                alert("PERINGATAN: Anda dilarang meninggalkan halaman ujian! Pelanggaran dicatat.");
+            }
+        });
+
+
+        // ==========================================
+        // FEATURE PERVASIVE 2: USER INACTIVITY (IDLE) DETECTOR
+        // ==========================================
+        function resetIdleTimer() {
+            // Jika sebelumnya terdeteksi AFK, hilangkan overlay saat ada pergerakan kembali
+            if (isIdle) {
+                isIdle = false;
+                idleOverlay.classList.add('hidden');
+                console.log("User kembali aktif.");
+            }
+            
+            clearTimeout(idleTimeout);
+            
+            // Set alarm idle kembali jika aplikasi sedang di halaman ujian
+            if (!examPage.classList.contains('hidden')) {
+                idleTimeout = setTimeout(goIdle, IDLE_TIME_LIMIT);
+            }
+        }
+
+        function goIdle() {
+            isIdle = true;
+            afkCount++;
+            idleOverlay.classList.remove('hidden');
+            console.warn("Status: User is Away From Keyboard (AFK)");
+        }
+
+        // Trigger deteksi lewat pergerakan sensor input fisik (Mouse & Keyboard)
+        window.addEventListener('mousemove', resetIdleTimer);
+        window.addEventListener('keypress', resetIdleTimer);
+        window.addEventListener('click', resetIdleTimer);
+        window.addEventListener('scroll', resetIdleTimer);
+
+    </script>
+</body>
+</html>
