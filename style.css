@@ -1,0 +1,104 @@
+/* =========================================================
+   RESET & STYLE DASAR
+   ========================================================= */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f8fafc; overflow: hidden; }
+
+/* BACKGROUND GELOMBANG BERGERAK (TETAP) */
+.background-animation {
+    position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; z-index: -1; background-color: #f8fafc;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cpath d='M0,30 Q75,0 150,30 T300,30 M0,90 Q75,60 150,90 T300,90 M0,150 Q75,120 150,150 T300,150 M0,210 Q75,180 150,210 T300,210 M0,270 Q75,240 150,270 T300,270' fill='none' stroke='%23e2e8f0' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M30,0 Q0,75 30,150 T30,300 M90,0 Q60,75 90,150 T90,300 M150,0 Q120,75 150,150 T150,300 M210,0 Q180,75 210,150 T210,300 M270,0 Q240,75 270,150 T270,300' fill='none' stroke='%23e2e8f0' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-size: 300px 300px; background-repeat: repeat; animation: jalanDiagonal 30s linear infinite; opacity: 0.85;
+}
+@keyframes jalanDiagonal { 0% { background-position: 0px 0px; } 100% { background-position: 300px 300px; } }
+
+/* CONTAINER KARTU UTAMA (DIUBAH MENJADI GELAP) */
+.exam-container { background: rgba(17, 17, 17, 0.95); backdrop-filter: blur(10px); width: 90%; max-width: 650px; padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); position: relative; z-index: 1; }
+
+/* SCREEN LOGIN */
+#login-screen { text-align: center; }
+#login-screen h2 { color: #ffffff; margin-bottom: 8px; font-size: 26px; }
+#login-screen p { color: #cccccc; margin-bottom: 25px; font-size: 14px; }
+.input-group { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+.input-group input { background-color: #000000; color: #ffffff; padding: 14px 20px; border: 2px solid #333333; border-radius: 12px; font-size: 15px; outline: none; transition: 0.3s; }
+.input-group input:focus { border-color: #ffffff; box-shadow: 0 0 10px rgba(255, 255, 255, 0.15); }
+.btn-primary { background: #000000; color: #ffffff; border: 1px solid #ffffff; width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.btn-primary:hover { background: #333333; }
+
+/* HEADER UJIAN */
+.exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.student-info h3 { font-size: 16px; color: #ffffff; }
+.student-info span { font-size: 12px; color: #cccccc; }
+#timer { background-color: #dc2626; color: white; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 600; } /* TETAP MERAH DANGER */
+
+/* PROGRESS BAR */
+.progress-container { width: 100%; height: 6px; background-color: #333333; border-radius: 10px; margin-bottom: 25px; overflow: hidden; }
+.progress-bar { height: 100%; width: 0%; background-color: #ffffff; transition: width 0.3s ease; }
+
+/* KOTAK SOAL */
+#quiz-box {
+    background-color: #000000;
+    padding: 22px 25px;
+    border-radius: 14px;
+    margin-bottom: 22px;
+    border: 1px solid #333333;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+}
+#question-text { font-size: 17px; color: #ffffff; font-weight: 500; line-height: 1.6; }
+
+/* PILIHAN JAWABAN + INDIKATOR TITIK PUTIH */
+.option-btn {
+    display: block; width: 100%; background-color: #000000; border: 2px solid #333333;
+    padding: 14px 20px 14px 48px; border-radius: 12px; text-align: left; font-size: 15px; color: #ffffff;
+    cursor: pointer; margin-bottom: 12px; position: relative; transition: all 0.2s ease;
+}
+.option-btn:hover { background-color: #111111; border-color: #666666; }
+
+.option-btn::before {
+    content: ''; position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px; border-radius: 50%; border: 2px solid #666666;
+    background-color: transparent; transition: all 0.2s ease;
+}
+
+.option-btn.selected { border-color: #ffffff; background-color: #111111; color: #ffffff; font-weight: 600; }
+.option-btn.selected::before {
+    border-color: #ffffff; background-color: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+/* TOMBOL FOOTER */
+.exam-footer { display: flex; justify-content: flex-end; margin-top: 20px; }
+.btn-next-step { background-color: #222222; color: #666666; border: none; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: not-allowed; transition: 0.2s; }
+.btn-next-step.active { background-color: #000000; color: #ffffff; border: 1px solid #ffffff; cursor: pointer; }
+.btn-next-step.active:hover { background-color: #333333; }
+
+/* POP-UP PERINGATAN (TETAP MERAH DANGER & PUTIH) */
+#warning-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+    display: flex; justify-content: center; align-items: center; z-index: 9999;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+#warning-modal.show { opacity: 1; pointer-events: all; }
+
+.modal-content {
+    background-color: #dc2626; color: #ffffff;
+    padding: 35px 30px; border-radius: 20px; text-align: center; max-width: 420px; width: 90%;
+    transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+#warning-modal.show .modal-content { transform: scale(1); }
+
+/* Animasi Danger Berdenyut */
+.danger-icon { font-size: 65px; margin-bottom: 10px; animation: denyutDanger 0.8s infinite alternate; }
+@keyframes denyutDanger { 
+    from { transform: scale(1); filter: drop-shadow(0 0 2px #fff); } 
+    to { transform: scale(1.15); filter: drop-shadow(0 0 12px #fff); } 
+}
+
+#warning-title { font-size: 24px; font-weight: 700; margin-bottom: 10px; letter-spacing: 1px; }
+#warning-message { font-size: 15px; margin-bottom: 15px; opacity: 0.9; }
+#warning-count { font-size: 16px; font-weight: 700; margin-bottom: 25px; background: rgba(0, 0, 0, 0.25); padding: 8px; border-radius: 8px; }
+
+#btn-close-warning { background: #ffffff; color: #dc2626; border: none; padding: 12px 25px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.2s; }
+#btn-close-warning:hover { background: #f8fafc; transform: translateY(-2px); }

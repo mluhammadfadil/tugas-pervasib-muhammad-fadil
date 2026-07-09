@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Exam Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="background-animation"></div>
+
+    <div class="exam-container">
+        
+        <div id="login-screen">
+            <h2>Selamat Datang</h2>
+            <p>Silakan masukkan data diri Anda sebelum memulai ujian</p>
+            <div class="input-group">
+                <input type="text" id="input-nama" placeholder="Nama Lengkap" autocomplete="off" required>
+                <input type="text" id="input-nim" placeholder="NIM / Nomor Peserta" autocomplete="off" required>
+            </div>
+            <button id="btn-start" class="btn-primary">Mulai Ujian</button>
+        </div>
+
+        <div id="exam-screen" style="display: none;">
+            <div class="exam-header">
+                <div class="student-info">
+                    <h3 id="display-nama">Nama Peserta</h3>
+                    <span id="display-nim">NIM: -</span>
+                </div>
+                <div id="timer">Sisa Waktu: <span id="time">00:00</span></div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div id="quiz-box">
+                <h2 id="question-text">Memuat pertanyaan...</h2>
+            </div>
+
+            <div id="options-container"></div>
+
+            <div class="exam-footer">
+                <button id="btn-next" class="btn-next-step disabled" disabled>Pertanyaan Berikutnya</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="warning-modal">
+        <div class="modal-content">
+            <div class="danger-icon">⚠️</div>
+            <h2 id="warning-title">PERINGATAN KERAS!</h2>
+            <p id="warning-message">Sistem mendeteksi tindakan kecurangan.</p>
+            <p id="warning-count"></p>
+            <button id="btn-close-warning">Saya Mengerti & Kembali Ujian</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
